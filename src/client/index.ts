@@ -97,6 +97,10 @@ export class Message {
   get content() {
     return this.raw.message
   }
+
+  get attatchments() {
+    return this.raw.files || []
+  }
   
   readonly channelID = this.raw.channelID
 

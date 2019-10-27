@@ -70,12 +70,28 @@ export interface DirectMessage {
 	lastMessaged: number
 }
 
+export interface File {
+	fileName: string
+	fileID: string
+	dimensions: {
+		width: number
+		height: number
+	}
+}
+
 export interface Message {
+	_id: string
+
+	files?: File[]
+	type?: number
+
+	messageID: string
 	channelID: string
+
 	message: string
+	
 	creator: Member
 	created: number
-	messageID: string
 }
 
 export type FriendStatus = [string?, string?]
