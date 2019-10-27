@@ -217,7 +217,7 @@ export class Client {
   async login(token: string) {
     this.token = token
 
-    const data  = await NertiviaFunctions.changeStatus(token, 0)
+    const data  = await NertiviaFunctions.changeStatus(token, 1)
 
     if(!data.ok) {
       throw `Could not get the connect.sid cookie, is your token valid?`
