@@ -20,14 +20,13 @@ export const EVENT_LIST = [
 
 	'server:add_channel',
 	'server:joined',
-	'server:joined',
 	'server:leave',
 	'server:member_add',
 	'server:member_remove',
 	'server:remove_channel',
 	'server:update_channel',
 
-	'success',
+	'success', // ???
 
 	'survey:completed',
 
