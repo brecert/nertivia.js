@@ -19,6 +19,9 @@ client.events.on('message', async (message: Nertivia.Message) => {
       reply.edit(Date())
     }, 1000)
   }
+  else if(cmd === '!whoami') {
+    message.reply(`${message.author.id}:${message.author.username}@${message.author.tag}`)
+  }
 })
 
 client.events.on('messageDelete', (message?: Nertivia.Message) => {
