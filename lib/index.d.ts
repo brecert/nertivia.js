@@ -1,4 +1,5 @@
 export * from './client/index';
-export * from './client/functions';
-export * from './client/constants';
+import * as Functions from './client/functions';
+import * as Constants from './nertivia/constants';
+export { Constants, Functions };
 //# sourceMappingURL=index.d.ts.map

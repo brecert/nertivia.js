@@ -1,6 +1,7 @@
 /// <reference types="socket.io-client" />
 import * as mitt from 'mitt';
 import * as NertiviaTypes from '../nertivia/types';
+import * as NertiviaConstants from '../nertivia/constants';
 export declare class Server {
     raw: NertiviaTypes.Server;
     client: Client;
@@ -53,15 +54,21 @@ export declare class Message {
     readonly id: string;
     readonly createdTimestamp: number;
     readonly createdAt: Date;
+    readonly initialContent: string | undefined;
+    readonly type: NertiviaConstants.MessageType | undefined;
+    readonly system: boolean;
     deleted: boolean;
     editedTimestamp: number;
     readonly editedAt: Date;
     readonly content: string;
+    readonly attatchments: NertiviaTypes.File[];
     readonly channelID: string;
     readonly channel: Channel | DMChannel | undefined;
     reply(content: string): Promise<Message>;
+    readonly author: User;
     delete(): Promise<this>;
     edit(content: string): Promise<this>;
+    toString(): string;
 }
 export declare class ClientUser extends User {
     raw: NertiviaTypes.ClientUser;
@@ -75,6 +82,7 @@ export declare class Client {
     socket: SocketIOClient.Socket;
     events: mitt.Emitter;
     messageCache: Message[];
+    userCache: User[];
     findMessage(id: string): Promise<Message>;
     user?: ClientUser;
     token?: string;
