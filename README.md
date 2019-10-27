@@ -1,11 +1,6 @@
 # nertivia.js
 > library to easily use the nertivia.js api
 
-## Installation
-```
-pnpm i
-```
-
 ## Example usage
 ```ts
 import * as Nertivia from 'nertivia.js'
