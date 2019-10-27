@@ -48,7 +48,7 @@ export class DMChannel {
   readonly id = this.raw.channelID
   get lastMessagedTimestamp() { return this.raw.lastMessaged }
   get lastMessaged() { return new Date(this.lastMessagedTimestamp) }
-  get users() { return this.raw.recipients }
+  get users() { return this.raw.recipients.map(r => new User(r, this.client)) }
 
   async send(content: string) {
     const response = await NertiviaFunctions.sendMessage(this.client.token!, this.id, content, this.client.socket.id)
@@ -71,6 +71,10 @@ export class User {
   readonly username = this.raw.username
   readonly displayType = this.raw.admin
   readonly tag = this.raw.tag
+
+  get dmChannel() {
+    return this.client.dms!.find(dm => dm.users.length === 1 && dm.users.some(user => user.id === this.id))
+  }
 }
 
 export class Message {

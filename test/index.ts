@@ -22,6 +22,13 @@ client.events.on('message', async (message: Nertivia.Message) => {
   else if(cmd === '!whoami') {
     message.reply(`${message.author.id}:${message.author.username}@${message.author.tag}`)
   }
+  else if(cmd === '!dmchannel') {
+    if(message.author.dmChannel) {
+      message.author.dmChannel.send('hi!')
+    } else {
+      message.reply("I can't dm you, sorry.")
+    }
+  }
 })
 
 client.events.on('messageDelete', (message?: Nertivia.Message) => {
