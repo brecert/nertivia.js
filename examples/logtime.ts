@@ -16,7 +16,7 @@ client.events.on('message', async (message: Nertivia.Message) => {
 })
 
 client.events.on('ready', () => {
-	console.log('ready')
+	console.log(`logged in as ${client.user!.username}`)
 })
 
 client.login(TOKEN)
