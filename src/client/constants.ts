@@ -6,7 +6,7 @@ export const EVENT_LIST = [
 	'customEmoji:remove',
 	'customEmoji:rename',
 
-	'delete_message',
+	'delete_message', // finished
 
 	'googleDrive:linked',
 

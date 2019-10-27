@@ -197,6 +197,16 @@ export class Client {
       this.events.emit('ready')
     })
 
+    this.socket.on('delete_message', (event: NertiviaEvents.DeleteMessage) => {
+      const message = this.messageCache.find(msg => msg.id === event.messageID)
+
+      if(message !== undefined) {
+        message.deleted = true
+      }
+
+      this.events.emit('messageDelete', message)
+    })
+
     this.socket.on('receiveMessage', (data: NertiviaEvents.RecieveMessage) => {
       const message = new Message(data.message, this)
       this.messageCache.push(message)

@@ -16,3 +16,8 @@ export interface Success {
 export interface RecieveMessage {
 	message: NertiviaTypes.Message
 }
+
+export interface DeleteMessage {
+	channelID: string
+	messageID: string
+}
