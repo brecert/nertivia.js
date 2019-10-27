@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "es2019",
+    "module": "commonjs",
+    "experimentalDecorators": true,
+    "preserveConstEnums": true,
+    "moduleResolution": "node",
+    "strict": true,
+    "strictNullChecks": true,
+
+    "declaration": true,
+    "sourceMap": true,
+    "declarationMap": true,
+
+    "outDir": "lib"
+  },
+  "exclude": ["./**/node_modules"],
+  "include": ["src/**/*.ts"]
+}

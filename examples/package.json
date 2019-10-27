@@ -1,0 +1,7 @@
+{
+  "name": "nertivia.js-examples",
+  "license": "ISC",
+  "dependencies": {
+    "nertivia.js": "link:.."
+  }
+}

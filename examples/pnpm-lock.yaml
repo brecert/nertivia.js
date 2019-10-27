@@ -1,0 +1,5 @@
+dependencies:
+  nertivia.js: 'link:..'
+lockfileVersion: 5.1
+specifiers:
+  nertivia.js: 'link:..'

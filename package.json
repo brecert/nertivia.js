@@ -1,0 +1,27 @@
+{
+  "name": "nertivia.js",
+  "version": "0.0.1",
+  "description": "nertivia client",
+  "license": "MIT",
+  "scripts": {
+    "build": "rimraf lib && tsc"
+  },
+  "dependencies": {
+    "jsonfile": "^5.0.0",
+    "mitt": "^1.2.0",
+    "node-fetch": "^2.6.0",
+    "socket.io-client": "^2.3.0"
+  },
+  "devDependencies": {
+    "@types/jsonfile": "^5.0.0",
+    "@types/node-fetch": "^2.5.2",
+    "@types/socket.io-client": "^1.4.32",
+    "rimraf": "^3.0.0",
+    "typescript": "^3.6.4"
+  },
+  "engines": {
+    "pnpm": ">=4"
+  },
+  "main": "./lib/index.js",
+  "typings": "./lib/index.d.ts"
+}
