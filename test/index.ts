@@ -29,7 +29,7 @@ client.events.on('messageDelete', (message?: Nertivia.Message) => {
 
 client.events.on('messageUpdate', (message?: Nertivia.Message) => {
   if(message) {
-    const changed = diff.diffChars(message.initialContent, message.content).map(part => {
+    const changed = diff.diffChars(message.initialContent || "", message.content).map(part => {
       const color = part.added ? '+' : part.removed ? '-' : '>'
       return `${color} ${part.value}`
     })

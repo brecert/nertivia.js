@@ -3,7 +3,7 @@ import * as mitt from 'mitt'
 
 import * as NertiviaEvents from '../nertivia/events'
 import * as NertiviaTypes from '../nertivia/types'
-import * as NertiviaConstants from './constants'
+import * as NertiviaConstants from '../nertivia/constants'
 import * as NertiviaFunctions from './functions'
 import * as NertiviaResponses from '../nertivia/responses'
 
@@ -86,16 +86,20 @@ export class Message {
   readonly createdTimestamp = this.raw.created
   readonly createdAt = new Date(this.createdTimestamp)
   readonly initialContent = this.raw.message
+  readonly type = this.raw.type
+  readonly system = this.raw.type !== NertiviaConstants.MessageType.DEFAULT
   
+  // author
+
   public deleted = false
   public editedTimestamp = this.createdTimestamp
- 
+
   get editedAt() {
     return new Date(this.editedTimestamp)
   }
 
   get content() {
-    return this.raw.message
+    return this.raw.message || ""
   }
 
   get attatchments() {
@@ -107,8 +111,6 @@ export class Message {
   get channel() {
     return this.client.channels.find(channel => this.channelID == channel.id)
   }
-
-  // readonly author = this.raw.creator
 
   async reply(content: string) {
     return this.channel!.send(content)
@@ -131,6 +133,10 @@ export class Message {
     this.raw.message = res.message
 
     return this
+  }
+
+  toString() {
+    return this.content
   }
 }
 
@@ -226,7 +232,8 @@ export class Client {
     this.socket.on('receiveMessage', (event: NertiviaEvents.RecieveMessage) => {
       const message = new Message(event.message, this)
       this.messageCache.push(message)
-      this.events.emit('message', message)
+
+      this.events.emit('message', message)        
     })
   }
 

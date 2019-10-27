@@ -1,6 +1,6 @@
 import fetch from 'node-fetch'
 
-import * as NertiviaConstants from './constants'
+import * as NertiviaConstants from '../nertivia/constants'
 import * as NertiviaResponses from '../nertivia/responses'
 
 export async function rawApiRequest(method: string, uri: string, token: string, data?: any, sid?: string) {

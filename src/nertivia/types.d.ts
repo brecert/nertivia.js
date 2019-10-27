@@ -1,3 +1,5 @@
+import * as NertiviaConstants from './constants'
+
 export interface Channel {
 	_id: string
 	name: string
@@ -83,12 +85,12 @@ export interface Message {
 	_id: string
 
 	files?: File[]
-	type?: number
+	type?: NertiviaConstants.MessageType
 
 	messageID: string
 	channelID: string
 
-	message: string
+	message?: string
 	
 	creator: Member
 	created: number

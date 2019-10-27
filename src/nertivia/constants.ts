@@ -40,3 +40,11 @@ export const EVENT_LIST = [
 
 export const SOCKET_IP = 'https://nertivia.supertiger.tk'
 export const API_URL = 'https://supertiger.tk/api'
+
+export enum MessageType {
+	DEFAULT,
+	JOIN,
+	LEAVE,
+	KICK,
+	BAN
+}
