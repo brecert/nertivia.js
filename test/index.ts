@@ -67,10 +67,10 @@ client.events.on('messageUpdate', async (message?: Nertivia.Message) => {
 client.events.on('ready', async () => {
   console.log(`logged in as ${client.user!.username}`)
 
-  let i = 0;
-  setInterval(async () => {
-    client.user!.setStatus((i++ % 4)+1)
-  }, 230)
+  // let i = 0;
+  // setInterval(async () => {
+  //   client.user!.setStatus((i++ % 4)+1)
+  // }, 230)
 })
 
 client.login(TOKEN).catch(console.error)
