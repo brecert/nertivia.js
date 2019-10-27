@@ -105,6 +105,10 @@ export class Message {
   get attatchments() {
     return this.raw.files || []
   }
+
+  get author() {
+    return new User(this.raw.creator, this.client)
+  }
   
   readonly channelID = this.raw.channelID
 
@@ -114,10 +118,6 @@ export class Message {
 
   async reply(content: string) {
     return this.channel!.send(content)
-  }
-
-  get author() {
-    return new User(this.raw.creator, this.client)
   }
 
   async delete() {
