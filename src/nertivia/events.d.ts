@@ -13,6 +13,15 @@ export interface Success {
 	currentFriendStatus: NertiviaTypes.FriendStatus[]
 }
 
+export interface UpdateMessage {
+	message: string
+	timeEdited: number
+	messageID: string
+	channelID: string
+	embed: number
+}
+
+
 export interface RecieveMessage {
 	message: NertiviaTypes.Message
 }

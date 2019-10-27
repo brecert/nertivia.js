@@ -85,9 +85,10 @@ export class Message {
   readonly id = this.raw.messageID
   readonly createdTimestamp = this.raw.created
   readonly createdAt = new Date(this.createdTimestamp)
-  deleted = false
- 
-  editedTimestamp = this.createdTimestamp
+  readonly initialContent = this.raw.message
+  
+  public deleted = false
+  public editedTimestamp = this.createdTimestamp
  
   get editedAt() {
     return new Date(this.editedTimestamp)
@@ -207,8 +208,19 @@ export class Client {
       this.events.emit('messageDelete', message)
     })
 
-    this.socket.on('receiveMessage', (data: NertiviaEvents.RecieveMessage) => {
-      const message = new Message(data.message, this)
+    this.socket.on('update_message', (event: NertiviaEvents.UpdateMessage) => {
+      const message = this.messageCache.find(msg => msg.id === event.messageID)
+      
+      if(message) {
+        message.raw.message = event.message
+        message.editedTimestamp = event.timeEdited
+      }
+
+      this.events.emit('messageUpdate', message)
+    })
+
+    this.socket.on('receiveMessage', (event: NertiviaEvents.RecieveMessage) => {
+      const message = new Message(event.message, this)
       this.messageCache.push(message)
       this.events.emit('message', message)
     })

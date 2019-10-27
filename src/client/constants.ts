@@ -34,7 +34,7 @@ export const EVENT_LIST = [
 	'typingStatus',
 
 	'update_member',
-	'update_message',
+	'update_message', // finished
 
 	'userStatusChange',
 ]
