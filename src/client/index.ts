@@ -116,6 +116,10 @@ export class Message {
     return this.channel!.send(content)
   }
 
+  get author() {
+    return new User(this.raw.creator, this.client)
+  }
+
   async delete() {
     this._deletedCheck()
 
@@ -156,6 +160,7 @@ export class Client {
   events: mitt.Emitter
   
   messageCache: Message[] = []
+  userCache: User[] = []
 
   findMessage(id: string): Promise<Message> {
     return new Promise((resolve, reject) => {
