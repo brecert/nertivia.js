@@ -160,7 +160,6 @@ export class Client {
   events: mitt.Emitter
   
   messageCache: Message[] = []
-  userCache: User[] = []
 
   findMessage(id: string): Promise<Message> {
     return new Promise((resolve, reject) => {
