@@ -35,8 +35,12 @@ export async function apiRequest(method: string, uri: string, token: string,  da
 
 }
 
-export async function changeStatus(token: string, status: number) {
+export async function testRequest(token: string, status: number) {
   return rawApiRequest("POST", '/settings/status', token, { status })
+}
+
+export async function updateStatus(token: string, status: NertiviaConstants.StatusType): Promise<NertiviaResponses.UpdateStatus> {
+  return apiRequest("POST", '/settings/status', token, { status })
 }
 
 export async function getMessages(token: string, channelID: string): Promise<NertiviaResponses.GetMessagesResponse> {

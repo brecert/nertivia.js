@@ -162,7 +162,15 @@ export class ClientUser extends User {
     super(raw, client)
   }
   
-  readonly status = this.raw.status
+  get status() { return this.raw.status }
+
+  async setStatus(status: NertiviaConstants.StatusType) {
+    const res = await NertiviaFunctions.updateStatus(this.client.token!, status)
+
+    this.raw.status = res.set
+
+    return this
+  }
 }
 
 export class Client {
@@ -257,7 +265,7 @@ export class Client {
   async login(token: string) {
     this.token = token
 
-    const data  = await NertiviaFunctions.changeStatus(token, 1)
+    const data  = await NertiviaFunctions.testRequest(token, 1)
 
     if(!data.ok) {
       throw `Could not get the connect.sid cookie, is your token valid?`

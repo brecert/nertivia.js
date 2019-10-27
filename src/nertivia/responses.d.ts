@@ -1,4 +1,5 @@
 import * as NertiviaTypes from './types'
+import * as NertiviaConstants from './constants'
 
 export interface GetMessagesResponse {
 	status: boolean
@@ -28,4 +29,9 @@ export interface DeleteMessageResponse {
 export interface CreateDMResponse {
 	status: boolean
 	channel: NertiviaTypes.DirectMessage
+}
+
+export interface UpdateStatus {
+	status: boolean
+	set: NertiviaConstants.StatusType
 }

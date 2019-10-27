@@ -48,3 +48,11 @@ export enum MessageType {
 	KICK,
 	BAN
 }
+
+export enum StatusType {
+	OFFLINE,
+	ONLINE,
+	AWAY,
+	BUSY,
+	LOOKING_TO_PLAY
+}
