@@ -23,6 +23,10 @@ client.events.on('message', async (message: Nertivia.Message) => {
     message.reply(`${message.author.id}:${message.author.username}@${message.author.tag}`)
   }
   else if(cmd === '!dmchannel') {
+
+    const dm = message.author.dmChannel || await message.author.createDM()
+
+
     if(message.author.dmChannel) {
       message.author.dmChannel.send('hi!')
     } else {

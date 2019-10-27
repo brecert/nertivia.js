@@ -25,3 +25,7 @@ export interface DeleteMessageResponse {
 	channelID: string
 }
 
+export interface CreateDMResponse {
+	status: boolean
+	channel: NertiviaTypes.DirectMessage
+}

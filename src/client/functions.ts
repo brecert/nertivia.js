@@ -78,5 +78,10 @@ export async function deleteMessage(token: string, messageID: string, channelID:
       "Cookie": `connect.sid=${sid}`
     }
   }).then(res => res.json())
+}
 
+// createChannel https://supertiger.tk/api/channels/{userID}
+
+export async function createDM(token: string, recipientID: string): Promise<NertiviaResponses.CreateDMResponse> {
+  return apiRequest("POST", `/channels/${recipientID}`, token)
 }

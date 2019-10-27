@@ -75,6 +75,15 @@ export class User {
   get dmChannel() {
     return this.client.dms!.find(dm => dm.users.length === 1 && dm.users.some(user => user.id === this.id))
   }
+
+  async createDM() {
+    const res = await NertiviaFunctions.createDM(this.client.token!, this.id)
+    
+    const dm = new DMChannel(res.channel, this.client)
+    this.client.dms!.push(dm)
+  
+    return dm
+  }
 }
 
 export class Message {
