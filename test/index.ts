@@ -80,7 +80,12 @@ client.events.on('message', async (message: Nertivia.Message) => {
       Nertivia.Requests.joinServerById(client.tokens, arg[0])
       break;    
     case "leaveServer":
-      Nertivia.Requests.leaveServer(client.tokens, client.servers!.find(s => s.channels.some(c => c.id === message.channelID))!.id)
+      if(message.channel instanceof Nertivia.Channel) {
+        Nertivia.Requests.leaveServer(client.tokens, message.channel.server!.id)
+      } else {
+        message.reply("Unable to leave DM's")
+      }
+
       break;
 
     case "logtime": {

@@ -34,6 +34,8 @@ export class Server {
 }
 
 export class Channel {
+  type = "text"
+
   constructor(public raw: NertiviaTypes.Channel, public client: Client) {
   }
 
@@ -42,6 +44,10 @@ export class Channel {
   readonly id = this.raw.channelID
   readonly name = this.raw.name
   readonly permissions = this.raw.permissions
+
+  get server() {
+    return this.client.servers!.find(s => s.channels.some(c => c.id === this.id))
+  }
 
   async send(content: string) {
     const response = await NertiviaRequests.sendMessage(this.client.tokens, this.id, content)
@@ -54,6 +60,8 @@ export class Channel {
 }
 
 export class DMChannel {
+  type = "dm"
+
   constructor(public raw: NertiviaTypes.DirectMessage, public client: Client) {
   }
 
