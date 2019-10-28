@@ -17,6 +17,10 @@ export class Server {
   readonly ownerID = this.raw.creator.uniqueID
   readonly channels = this.raw.channels.map(channel => new Channel(channel, this.client))
   readonly defaultChannel = this.channels.find(channel => this.defaultChannelId === channel.id)!
+
+  get name() {
+    return this.raw.name
+  }
   
   // readonly owner = this.raw.creator.uniqueID
 
