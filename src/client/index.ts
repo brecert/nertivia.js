@@ -4,8 +4,8 @@ import * as mitt from 'mitt'
 import * as NertiviaEvents from '../nertivia/events'
 import * as NertiviaTypes from '../nertivia/types'
 import * as NertiviaConstants from '../nertivia/constants'
-import * as NertiviaFunctions from './functions'
 import * as NertiviaResponses from '../nertivia/responses'
+import * as NertiviaRequests from './requests'
 
 export class Server {
   constructor(public raw: NertiviaTypes.Server, public client: Client) {
@@ -32,7 +32,7 @@ export class Channel {
   readonly permissions = this.raw.permissions
 
   async send(content: string) {
-    const response = await NertiviaFunctions.sendMessage(this.client.token!, this.id, content, this.client.socket.id)
+    const response = await NertiviaRequests.sendMessage(this.client.tokens, this.id, content)
     const message = new Message(response.messageCreated, this.client)
 
     this.client.messageCache.push(message)
@@ -51,7 +51,7 @@ export class DMChannel {
   get users() { return this.raw.recipients.map(r => new User(r, this.client)) }
 
   async send(content: string) {
-    const response = await NertiviaFunctions.sendMessage(this.client.token!, this.id, content, this.client.socket.id)
+    const response = await NertiviaRequests.sendMessage(this.client.tokens, this.id, content)
     const message = new Message(response.messageCreated, this.client)
 
     this.client.messageCache.push(message)
@@ -79,8 +79,8 @@ export class User {
     return this.client.dms!.find(dm => dm.users.length === 1 && dm.users.some(user => user.id === this.id))
   }
 
-  async createDM() {
-    const res = await NertiviaFunctions.createDM(this.client.token!, this.id)
+  async openDM() {
+    const res = await NertiviaRequests.openDM(this.client.tokens, this.id)
     
     const dm = new DMChannel(res.channel, this.client)
     this.client.dms!.push(dm)
@@ -152,7 +152,7 @@ export class Message {
   async delete() {
     this._deletedCheck()
 
-    NertiviaFunctions.deleteMessage(this.client.token!, this.id, this.channelID, this.client.sid!)
+    NertiviaRequests.deleteMessage(this.client.tokens, this.id, this.channelID)
     this.deleted = true
     return this
   }
@@ -160,7 +160,7 @@ export class Message {
   async edit(content: string) {
     this._deletedCheck()
     
-    const res = await NertiviaFunctions.editMessage(this.client.token!, this.id, this.channelID, content, this.client.sid!)
+    const res = await NertiviaRequests.editMessage(this.client.tokens, this.id, this.channelID, content)
 
     this.editedTimestamp = res.timeEdited
     this.raw.message = res.message
@@ -181,7 +181,7 @@ export class ClientUser extends User {
   get status() { return this.raw.status }
 
   async setStatus(status: NertiviaConstants.StatusType) {
-    const res = await NertiviaFunctions.updateStatus(this.client.token!, status)
+    const res = await NertiviaRequests.updateStatus(this.client.tokens, status)
 
     this.raw.status = res.set
 
@@ -226,6 +226,13 @@ export class Client {
 
   get channels(): GenericChannel[] {
     return [...this.servers!.flatMap(server => server.channels), ...this.dms!]
+  }
+
+  get tokens(): NertiviaRequests.ITokens {
+    return {
+      token: this.token!,
+      sid: this.sid!
+    }
   }
 
   constructor() {
@@ -282,7 +289,7 @@ export class Client {
   async login(token: string) {
     this.token = token
 
-    const data  = await NertiviaFunctions.testRequest(token, 1)
+    const data  = await NertiviaRequests.testRequest(token, 1)
 
     if(!data.ok) {
       throw `Could not get the connect.sid cookie, is your token valid?`

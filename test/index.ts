@@ -29,7 +29,7 @@ client.events.on('message', async (message: Nertivia.Message) => {
   }
   else if(cmd === '!dmchannel') {
 
-    const dm = message.author.dmChannel || await message.author.createDM()
+    const dm = message.author.dmChannel || await message.author.openDM()
 
 
     if(message.author.dmChannel) {
@@ -45,7 +45,7 @@ client.events.on('message', async (message: Nertivia.Message) => {
 
 client.events.on('messageDelete', async (message?: Nertivia.Message) => {
   if(message) {
-    const dm: Nertivia.DMChannel = client.user!.dmChannel || await client.user!.createDM()
+    const dm: Nertivia.DMChannel = client.user!.dmChannel || await client.user!.openDM()
 
     dm.send(block(
       `DELETED: [${message.id}] by ${message.author.username}@${message.author.tag}\n${message.content}`
@@ -55,7 +55,7 @@ client.events.on('messageDelete', async (message?: Nertivia.Message) => {
 
 client.events.on('messageUpdate', async (message?: Nertivia.Message) => {
   if(message) {
-    const dm: Nertivia.DMChannel = client.user!.dmChannel || await client.user!.createDM()
+    const dm: Nertivia.DMChannel = client.user!.dmChannel || await client.user!.openDM()
 
     const changed = diff.diffChars(message.initialContent || "", message.content).map(part => {
       const color = part.added ? '+' : part.removed ? '-' : '>'
