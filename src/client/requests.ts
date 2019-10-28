@@ -3,6 +3,7 @@ import * as FormData from 'form-data'
 
 import * as NertiviaConstants from '../nertivia/constants'
 import * as NertiviaResponses from '../nertivia/responses'
+import * as NertiviaTypes from '../nertivia/types'
 
 export interface ApiRequestParams {
 	token?: string
@@ -12,10 +13,12 @@ export interface ApiRequestParams {
 	headers?: { [key: string]: string }
 
 	json?: boolean
+	type?: string
 }
 
-export function apiRequest(method: string, path: string, { token, sid, data, json = true, headers = {} }: ApiRequestParams) {
+export function apiRequest(method: string, path: string, { token, sid, data, json = true, headers = {}, type = "json" }: ApiRequestParams) {
 	const url = `${NertiviaConstants.API_URL}${path}`
+
 
 	if(!token) {
 		throw new Error('TOKEN_MISSING')
@@ -23,8 +26,19 @@ export function apiRequest(method: string, path: string, { token, sid, data, jso
 
 	const mergedHeaders: typeof headers = {
 		authorization: token,
-		"Content-Type": "application/json;charset=utf-8",
 		...headers
+	}
+
+	switch (type) {
+		case "json":
+			mergedHeaders["Content-Type"] = "application/json;charset=utf-8"
+			break;
+		case "none":
+		case "unknown":
+			break;
+		default:
+			mergedHeaders["Content-Type"] = type
+			break;
 	}
 
 	if(sid) {
@@ -33,7 +47,20 @@ export function apiRequest(method: string, path: string, { token, sid, data, jso
 
 	return (
 		fetch(url, { method, body: data, headers: mergedHeaders })
-			.then(res => json ? res.json() : res)
+			.then(async res => {
+				if(res.status !== 200) {
+					const text = await res.text()
+					const jsonText = JSON.parse(text)
+					if(jsonText && jsonText.message) {
+						throw new Error(jsonText.message)
+					}
+
+					throw new Error(jsonText || text)
+				}
+
+				return json ? res.json() : res
+			})
+			.catch(err => console.error(err))
 	)
 }
 
@@ -89,14 +116,57 @@ export interface IFile {
 	data: any
 }
 
-export function sendFileMessage({ token, sid }: ITokens, messageID: string, channelID: string, message: string, file: IFile): Promise<NertiviaResponses.SendMessageResponse> {
+export interface SendFileMessageParams extends IFile {
+	message?: string
+}
+
+export function sendFileMessage({ token, sid }: ITokens, channelID: string, { message = "_", name, data }: SendFileMessageParams): Promise<NertiviaResponses.SendMessageResponse> {
 	const formdata = new FormData() 
 
   formdata.append('message', message)
-  formdata.append('avatar', file.data, file.name)
+  formdata.append('avatar', data, name)
 
   return apiRequest(
   	"POST", `/messages/channels/${channelID}`,
-  	{ data: formdata }
+  	{ token, sid, data: formdata, type: "unknown" }
+	)
+}
+
+export interface JoinServerResponse {
+	/** the name of the server */
+	name: string
+
+	/** the creator of the server */
+	creator: {
+		uniqueID: string
+	}
+
+	default_channel_id: string
+
+	server_id: string
+
+	/** a timestamp when the server was created */
+	created: number
+
+	/** the icon id of the server */
+	avatar: string
+
+	/** if the server is public or not */
+	public: boolean
+}
+export function joinServerById({ token, sid }: ITokens, serverID: string): Promise<JoinServerResponse> {
+	return apiRequest(
+  	"POST", `/servers/invite/servers/${serverID}`,
+  	{ token, sid }
+	)
+}
+
+export interface LeaveServerResponse {
+	status: "Done!" | string
+}
+export function leaveServer({ token, sid }: ITokens, serverID: string): Promise<LeaveServerResponse> {
+	return apiRequest(
+  	"DELETE", `/servers/${serverID}`,
+  	{ token, sid }
 	)
 }

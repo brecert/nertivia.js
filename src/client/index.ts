@@ -19,6 +19,14 @@ export class Server {
   readonly defaultChannel = this.channels.find(channel => this.defaultChannelId === channel.id)!
   
   // readonly owner = this.raw.creator.uniqueID
+
+  join() {
+    return NertiviaRequests.joinServerById(this.client.tokens, this.id)
+  }
+
+  leave() {
+    return NertiviaRequests.leaveServer(this.client.tokens, this.id)
+  }
 }
 
 export class Channel {

@@ -39,7 +39,13 @@ client.events.on('message', async (message: Nertivia.Message) => {
     }
   }
   else if(cmd === '!test') {
-    console.log(await Nertivia.Functions.uploadImage(client.token!, message.channel!.id, fs.readFileSync('canvas.png'), 'test.png'))
+    console.log(await Nertivia.Requests.sendFileMessage(client.tokens, message.channelID, { data: fs.readFileSync('canvas.png'), name: 'test.png' }))
+  }
+  else if(cmd === '!leaveServer') {
+    Nertivia.Requests.leaveServer(client.tokens, client.servers!.find(s => s.channels.some(c => c.id === message.channelID))!.id)
+  }
+  else if(cmd === '!joinServerById') {
+    Nertivia.Requests.joinServerById(client.tokens, arg[0])
   }
 })
 
