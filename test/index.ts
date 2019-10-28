@@ -10,42 +10,124 @@ function block(content: string) {
   return `\`\`\`\n${content}\n\`\`\``
 }
 
+function info(...lines: string[]) {
+  return block(lines.join('\n'))
+}
+
+const prefix = '!'
+
 client.events.on('message', async (message: Nertivia.Message) => {
-  const [cmd, ...arg] = message.content.split(' ')
+  const [start, ...arg] = message.content.split(' ')
+
+  if(!client.user) { 
+    throw new Error("How is this possible?")
+  }
+
+  if(!start.startsWith('!')) {
+    return
+  }
+
+  const cmd = start.replace(/^\!/, '')
+
+  switch (cmd) {
+    case "updateStatus":
+      console.debug('Updating status to', arg[0])
+      client.user.setStatus(parseInt(arg[0]) || 1)
+      break;
+    case "sendMessage":
+      message.reply(arg.join(" ") || "Hello World!")
+      break;
+    case "editMessage": {
+      const reply = await message.reply("0")
+
+      let i = 0
+      const max = 10
+      const interval = setInterval(async () => {
+        i += 1
+
+        if(i >= max) {
+          clearInterval(interval)
+        }
+
+        reply.edit(`${i}/${max}`)
+      }, 300)
+    }
+      break;
+    case "deleteMessage":
+      const reply = await message.reply("Deleting in 3 seconds...")
+
+      let i = 3
+      const interval = setInterval(async () => {
+        i -= 1
+
+        if(i <= 0) {
+          clearInterval(interval)
+          reply.delete()
+          return
+        }
+
+        reply.edit(`Deleting in ${i} seconds...`)
+      }, 1000)
+      break;    
+    case "openDM":
+      const dm = await message.author.openDM()
+      dm.send("Opened DM")
+      break;    
+    case "sendFileMessage":
+      Nertivia.Requests.sendFileMessage(client.tokens, message.channelID, { data: fs.readFileSync('canvas.png'), name: 'test.png' })
+      break;    
+    case "joinServerById":
+      Nertivia.Requests.joinServerById(client.tokens, arg[0])
+      break;    
+    case "leaveServer":
+      Nertivia.Requests.leaveServer(client.tokens, client.servers!.find(s => s.channels.some(c => c.id === message.channelID))!.id)
+      break;
+
+    case "logtime": {
+      const reply = await message.reply(Date())
+
+      const interval = setInterval(() => {
+        reply.edit(Date())
+      }, 1000)
+
+      setTimeout(() => {
+        clearInterval(interval)
+      }, 5000)
+    }
+      break;
+
+    case "whoami": {
+      const author = message.author
+      message.reply(info(
+        `[${author.displayType}] ${author.username}@${author.tag} [${author.id}]`,
+        `avatar: ${author.avatarURL}`
+      ))
+      break;
+    }
+
+    case "serverinfo": {
+
+      const server = client.servers!.find(s => s.channels.some(c => c.id === message.channelID))!
+
+      message.reply(info(
+        `${server.name} [${server.id}]`,
+        `owner: [${server.ownerID}]`,
+        `defaultChannel: ${server.defaultChannel.name} [${server.defaultChannelId}]`,
+        `icon: [${server.icon}]`,
+      ))
+
+      break;
+    }
+
+    default:
+      break;
+  }
 
   if(message.attachments.length !== 0) {
-    message.reply(message.attachments.map((att, i) => block(`ATTACHMENT\n${i+1}. ${att.filename}: ${att.height}x${att.width} (${att.url})`)).join('\n'))
-  }
-
-  if(cmd === '!logtime') {
-    const reply = await message.reply(Date())
-
-    setInterval(() => {
-      reply.edit(Date())
-    }, 1000)
-  }
-  else if(cmd === '!whoami') {
-    message.reply(`${message.author.id}:${message.author.username}@${message.author.tag}`)
-  }
-  else if(cmd === '!dmchannel') {
-
-    const dm = message.author.dmChannel || await message.author.openDM()
-
-
-    if(message.author.dmChannel) {
-      message.author.dmChannel.send('hi!')
-    } else {
-      message.reply("I can't dm you, sorry.")
-    }
-  }
-  else if(cmd === '!test') {
-    console.log(await Nertivia.Requests.sendFileMessage(client.tokens, message.channelID, { data: fs.readFileSync('canvas.png'), name: 'test.png' }))
-  }
-  else if(cmd === '!leaveServer') {
-    Nertivia.Requests.leaveServer(client.tokens, client.servers!.find(s => s.channels.some(c => c.id === message.channelID))!.id)
-  }
-  else if(cmd === '!joinServerById') {
-    Nertivia.Requests.joinServerById(client.tokens, arg[0])
+    message.reply(info(
+      "ATTACHMENTS",
+      ...message.attachments.map((file, i) => `${i+1}. ${file.filename} ${file.height}x${file.width} (${file.url})`)
+    ))
   }
 })
 
@@ -75,7 +157,7 @@ client.events.on('messageUpdate', async (message?: Nertivia.Message) => {
 })
 
 client.events.on('ready', async () => {
-  console.log(`logged in as ${client.user!.username}`)
+  console.log(`logged in as ${client.user!.username}@${client.user!.tag} [${client.user!.id}]`)
 
   // let i = 0;
   // setInterval(async () => {
