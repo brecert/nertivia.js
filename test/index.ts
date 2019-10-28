@@ -1,6 +1,7 @@
 import * as Nertivia from '../src/index'
 import * as jsonfile from 'jsonfile'
 import * as diff from 'diff'
+import * as fs from 'fs'
 
 const client = new Nertivia.Client()
 const TOKEN = jsonfile.readFileSync('config.json').token
@@ -36,6 +37,9 @@ client.events.on('message', async (message: Nertivia.Message) => {
     } else {
       message.reply("I can't dm you, sorry.")
     }
+  }
+  else if(cmd === '!test') {
+    console.log(await Nertivia.Functions.uploadImage(client.token!, message.channel!.id, fs.readFileSync('canvas.png'), 'test.png'))
   }
 })
 

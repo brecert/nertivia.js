@@ -1,4 +1,5 @@
 import fetch from 'node-fetch'
+import * as FormData from 'form-data'
 
 import * as NertiviaConstants from '../nertivia/constants'
 import * as NertiviaResponses from '../nertivia/responses'
@@ -88,4 +89,19 @@ export async function deleteMessage(token: string, messageID: string, channelID:
 
 export async function createDM(token: string, recipientID: string): Promise<NertiviaResponses.CreateDMResponse> {
   return apiRequest("POST", `/channels/${recipientID}`, token)
+}
+
+export async function uploadImage(token: string, channelID: string, fileData: any, fileName: string, message: string = "") {
+  const formdata = new FormData()
+
+  formdata.append('message', message)
+  formdata.append('avatar', fileData, fileName)
+
+  return fetch(`${NertiviaConstants.API_URL}/messages/channels/${channelID}`, {
+    method: "POST",
+    headers: {
+      "authorization": token
+    },
+    body: formdata
+  }).then(res => res.json())
 }
