@@ -83,7 +83,7 @@ client.events.on('message', async (message: Nertivia.Message) => {
       if(message.channel instanceof Nertivia.Channel) {
         Nertivia.Requests.leaveServer(client.tokens, message.channel.server!.id)
       } else {
-        message.reply("Unable to leave DM's")
+        message.reply("Unable to leave DM")
       }
 
       break;
