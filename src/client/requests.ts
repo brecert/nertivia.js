@@ -51,11 +51,18 @@ export function apiRequest(method: string, path: string, { token, sid, data, jso
 				if(res.status !== 200) {
 					const text = await res.text()
 					const jsonText = JSON.parse(text)
-					if(jsonText && jsonText.message) {
-						throw new Error(jsonText.message)
+
+					if(jsonText) {
+						if(jsonText.message) {
+							throw new Error(jsonText.message)
+						}
+
+						if(!jsonText.status) {
+							throw new Error(jsonText.errors[0].msg)
+						}
 					}
 
-					throw new Error(jsonText || text)
+					throw new Error(JSON.stringify(jsonText) || text)
 				}
 
 				return json ? res.json() : res
