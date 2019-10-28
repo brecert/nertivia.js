@@ -38,7 +38,7 @@ export const EVENT_LIST = [
 	'userStatusChange',
 ]
 
-export const SOCKET_IP = 'https://nertivia.supertiger.tk'
+export const SOCKET_URL = 'https://nertivia.supertiger.tk'
 export const API_URL = 'https://supertiger.tk/api'
 export const AVATAR_URL = 'https://supertiger.tk/api/avatars'
 export const MEDIA_URL = 'https://supertiger.tk/api/media'

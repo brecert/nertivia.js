@@ -190,7 +190,7 @@ export class ClientUser extends User {
 }
 
 export class Client {
-  static SOCKET_IP = NertiviaConstants.SOCKET_IP
+  static SOCKET_URL = NertiviaConstants.SOCKET_URL
   static API_URL = NertiviaConstants.API_URL
 
   socket: SocketIOClient.Socket
@@ -229,7 +229,7 @@ export class Client {
   }
 
   constructor() {
-    this.socket = io(Client.SOCKET_IP, { autoConnect: false })
+    this.socket = io(Client.SOCKET_URL, { autoConnect: false })
     
     this.events = mitt()
 
