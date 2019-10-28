@@ -13,7 +13,7 @@ client.events.on('message', async (message: Nertivia.Message) => {
   const [cmd, ...arg] = message.content.split(' ')
 
   if(message.attatchments.length !== 0) {
-    message.reply(message.attatchments.map((att, i) => `${i+1}. [${att.fileID}] ${att.dimensions.height}x${att.dimensions.width}`).join('\n'))
+    message.reply(message.attatchments.map((att, i) => block(`ATTACHMENT\n${i+1}. ${att.filename}: ${att.height}x${att.width} (${att.url})`)).join('\n'))
   }
 
   if(cmd === '!logtime') {

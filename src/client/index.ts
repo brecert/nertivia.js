@@ -68,6 +68,9 @@ export class User {
 
   readonly id = this.raw.uniqueID
   readonly avatar = this.raw.avatar
+
+  get avatarURL() { return `${NertiviaConstants.AVATAR_URL}/${this.avatar}` }
+
   readonly username = this.raw.username
   readonly displayType = this.raw.admin
   readonly tag = this.raw.tag
@@ -84,6 +87,19 @@ export class User {
   
     return dm
   }
+}
+
+export class Attachment {
+  constructor(public raw: NertiviaTypes.File, public client: Client) {
+  }
+
+  get filename() { return this.raw.fileName }
+  get id() { return this.raw.fileID }
+  
+  get width() { return this.raw.dimensions.width }
+  get height() { return this.raw.dimensions.height }
+
+  get url() { return `${NertiviaConstants.MEDIA_URL}/${this.id}` }
 }
 
 export class Message {
@@ -115,8 +131,8 @@ export class Message {
     return this.raw.message || ""
   }
 
-  get attatchments() {
-    return this.raw.files || []
+  get attachments() {
+    return (this.raw.files || []).map(file => new Attachment(file, this.client))
   }
 
   get author() {
@@ -260,6 +276,7 @@ export class Client {
 
       this.events.emit('message', message)        
     })
+
   }
 
   async login(token: string) {
