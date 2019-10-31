@@ -177,3 +177,27 @@ export function leaveServer({ token, sid }: ITokens, serverID: string): Promise<
   	{ token, sid }
 	)
 }
+
+export interface AboutMe {
+	_id: string
+	name?: string
+	gender?: string
+	age?: string
+	continent?: string
+	country?: string
+	about_me?: string
+}
+export interface UserDetails extends NertiviaTypes.Member {
+	created: number
+	about_me?: AboutMe
+	badges: NertiviaConstants.BadgeType[]
+}
+export interface UserDetailsResponse {
+	user: UserDetails
+}
+export function userDetails({ token, sid }: ITokens, userID: string): Promise<UserDetailsResponse> {
+	return apiRequest(
+		"GET", `/user/${userID}`,
+		{ token, sid }
+	)
+}

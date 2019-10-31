@@ -6,7 +6,7 @@ import * as NertiviaTypes from '../nertivia/types'
 import * as NertiviaConstants from '../nertivia/constants'
 import * as NertiviaResponses from '../nertivia/responses'
 import * as NertiviaRequests from './requests'
-
+  
 export class Server {
   constructor(public raw: NertiviaTypes.Server, public client: Client) {
   }
@@ -82,6 +82,7 @@ export class DMChannel {
 
 export type GenericChannel = Channel | DMChannel
 
+
 export class User {
   constructor(public raw: NertiviaTypes.Member, public client: Client) {
   }
@@ -107,6 +108,30 @@ export class User {
   
     return dm
   }
+
+  async fetchProfile() {
+    return new UserProfile((await NertiviaRequests.userDetails(this.client.tokens, this.id)).user, this.client)
+  }
+}
+
+export class UserProfile extends User {
+  constructor(public raw: NertiviaRequests.UserDetails, public client: Client) {
+    super(raw, client)
+  }
+
+  private get aboutUser(): NertiviaRequests.AboutMe {
+    return this.raw.about_me || {} as any
+  }
+
+  get createdTimestamp() { return this.raw.created }
+  get createdAt() { return new Date(this.createdTimestamp) }
+  get name() { return this.aboutUser.name }
+  get age() { return this.aboutUser.age }
+  get continent() { return this.aboutUser.continent }
+  get country() { return this.aboutUser.country }
+  get gender() { return this.aboutUser.gender }
+  get about() { return this.aboutUser.about_me }
+  get badges() { return this.raw.badges }
 }
 
 export class Attachment {

@@ -58,3 +58,8 @@ export enum StatusType {
 	BUSY,
 	LOOKING_TO_PLAY
 }
+
+export enum BadgeType {
+	BUG_CATCHER = 3,
+	SUPPORTER = 5
+}

@@ -88,6 +88,21 @@ client.events.on('message', async (message: Nertivia.Message) => {
 
       break;
 
+    case "userDetails": {
+      const profile = await message.author.fetchProfile()
+      message.reply(info(
+        `PROFILE`,
+        `name: ${profile.name}`,
+        `age: ${profile.age}`,
+        `gender: ${profile.gender}`,
+        `continent: ${profile.continent}`,
+        `country: ${profile.country}`,
+        `badges: ${profile.badges}`,
+        `about: ${profile.about}`,
+      ))
+      break;
+    }
+
     case "logtime": {
       const reply = await message.reply(Date())
 
