@@ -19,7 +19,7 @@ export const EVENT_LIST = [
 	'relationshipRemove',
 
 	'server:add_channel',
-	'server:joined',
+	'server:joined', // wip
 	'server:leave',
 	'server:member_add',
 	'server:member_remove',

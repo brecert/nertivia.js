@@ -275,6 +275,7 @@ export class Client {
   dms?: DMChannel[]
   sid?: string
 
+  // todo: reverse this process and have the servers add to the cache here
   get channels(): GenericChannel[] {
     return [...this.servers!.flatMap(server => server.channels), ...this.dms!]
   }
@@ -291,7 +292,7 @@ export class Client {
     
     // debug, REMOVE!
     // const onevent = (this.socket as any).onevent;
-    // (this.socket as any).onevent = function (e: any) { onevent.call(this, e); console.log(e) }
+    // (this.socket as any).onevent = function (e: any) { onevent.call(this, e); console.log(e.data[0], e.data[1]) }
 
     this.events = mitt()
 
@@ -337,6 +338,16 @@ export class Client {
       this.messageCache.push(message)
 
       this.events.emit('message', message)        
+    })
+
+    this.socket.on("server:joined", (event: NertiviaEvents.ServerJoined) => {
+      if(this.servers) {
+        const server = new Server(event, this)
+        this.servers.push(server)
+        this.events.emit('serverJoin', server)
+      } else {
+        throw new Error("Recieved 'server:joined' event before client servers could be created!")
+      }
     })
   }
 

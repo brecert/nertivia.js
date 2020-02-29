@@ -21,7 +21,6 @@ export interface UpdateMessage {
 	embed: number
 }
 
-
 export interface RecieveMessage {
 	message: NertiviaTypes.Message
 }
@@ -30,3 +29,5 @@ export interface DeleteMessage {
 	channelID: string
 	messageID: string
 }
+
+export type ServerJoined = NertiviaTypes.Server

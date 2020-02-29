@@ -1,7 +1,6 @@
 import * as NertiviaConstants from './constants'
 
 export interface Channel {
-	_id: string
 	name: string
 	channelID: string
 	server: string
@@ -12,14 +11,16 @@ export interface Channel {
 }
 
 export interface Server {
-	_id: string
 	name: string
 	creator: {
 		uniqueID: string
 	}
 	default_channel_id: string
 	server_id: string
+	created: number
 	avatar: string
+	banner: string
+	channel_position: string[]
 	channels: Channel[]
 }
 
@@ -50,7 +51,6 @@ export interface Notification {
 }
 
 export interface ClientUser {
-	_id: string
 	avatar: string
 	status: number
 	friends: Friend[]
@@ -82,8 +82,6 @@ export interface File {
 }
 
 export interface Message {
-	_id: string
-
 	files?: File[]
 	type?: NertiviaConstants.MessageType
 
