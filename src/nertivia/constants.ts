@@ -25,6 +25,8 @@ export const EVENT_LIST = [
 	'server:member_remove',
 	'server:remove_channel',
 	'server:update_channel',
+	'server:roles',
+	'server:members',
 
 	'success', // ???
 

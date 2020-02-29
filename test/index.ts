@@ -103,6 +103,14 @@ client.events.on('message', async (message: Nertivia.Message) => {
       break;
     }
 
+    case "typingPing": {
+      if(message.channel) {
+        message.channel.startTyping()
+      }
+
+      break;
+    }
+
     case "logtime": {
       const reply = await message.reply(Date())
 

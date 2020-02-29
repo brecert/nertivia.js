@@ -50,7 +50,10 @@ export function apiRequest(method: string, path: string, { token, sid, data, jso
 			.then(async res => {
 				if(res.status !== 200) {
 					const text = await res.text()
-					const jsonText = JSON.parse(text)
+					let jsonText
+					try {
+						jsonText = JSON.parse(text)
+					} catch(err) {}
 
 					if(jsonText) {
 						if(jsonText.message) {
@@ -200,4 +203,11 @@ export function userDetails({ token, sid }: ITokens, userID: string): Promise<Us
 		"GET", `/user/${userID}`,
 		{ token, sid }
 	)
+}
+
+export function typingPing({ token, sid }: ITokens, channelID: string) {
+	apiRequest(
+		"POST", `/messages/${channelID}/typing`,
+		{ token, sid, json: false }
+	)	
 }

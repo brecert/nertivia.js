@@ -33,54 +33,54 @@ export class Server {
   }
 }
 
-export class Channel {
+export class GenericChannel {
+  constructor(public raw: NertiviaTypes.Channel | NertiviaTypes.DirectMessage, public client: Client) {
+  }
+
+  readonly id = this.raw.channelID
+
+  async send(content: string) {
+    const response = await NertiviaRequests.sendMessage(this.client.tokens, this.id, content)
+    const message = new Message(response.messageCreated, this.client)
+
+    this.client.messageCache.push(message)
+
+    return message
+  }
+
+  startTyping(count = 1) {
+    NertiviaRequests.typingPing(this.client.tokens, this.id)
+  }
+}
+
+export class Channel extends GenericChannel {
   type = "text"
 
   constructor(public raw: NertiviaTypes.Channel, public client: Client) {
+    super(raw, client)
   }
 
-  // readonly server = this.raw.server
-
-  readonly id = this.raw.channelID
   readonly name = this.raw.name
   readonly permissions = this.raw.permissions
 
   get server() {
     return this.client.servers!.find(s => s.channels.some(c => c.id === this.id))
   }
-
-  async send(content: string) {
-    const response = await NertiviaRequests.sendMessage(this.client.tokens, this.id, content)
-    const message = new Message(response.messageCreated, this.client)
-
-    this.client.messageCache.push(message)
-
-    return message
-  }
 }
 
-export class DMChannel {
+export class DMChannel extends GenericChannel {
   type = "dm"
 
   constructor(public raw: NertiviaTypes.DirectMessage, public client: Client) {
+    super(raw, client)
   }
 
   readonly id = this.raw.channelID
+
   get lastMessagedTimestamp() { return this.raw.lastMessaged }
-  get lastMessaged() { return new Date(this.lastMessagedTimestamp) }
+  get lastMessaged() { return new Date(this.raw.lastMessaged) }
   get users() { return this.raw.recipients.map(r => new User(r, this.client)) }
-
-  async send(content: string) {
-    const response = await NertiviaRequests.sendMessage(this.client.tokens, this.id, content)
-    const message = new Message(response.messageCreated, this.client)
-
-    this.client.messageCache.push(message)
-
-    return message
-  }
 }
-
-export type GenericChannel = Channel | DMChannel
 
 
 export class User {
@@ -234,6 +234,11 @@ export class ClientUser extends User {
   }
 }
 
+// interface TypingEntry {
+//   count: number
+//   interval: 
+// }
+
 export class Client {
   static SOCKET_URL = NertiviaConstants.SOCKET_URL
   static API_URL = NertiviaConstants.API_URL
@@ -242,6 +247,7 @@ export class Client {
   events: mitt.Emitter
   
   messageCache: Message[] = []
+  // #typing: Map<string, TypingEntry> = new Map
 
   findMessage(id: string): Promise<Message> {
     return new Promise((resolve, reject) => {
@@ -281,8 +287,12 @@ export class Client {
   }
 
   constructor() {
-    this.socket = io(Client.SOCKET_URL, { autoConnect: false })
+    this.socket = io(Client.SOCKET_URL, { autoConnect: false });
     
+    // debug, REMOVE!
+    // const onevent = (this.socket as any).onevent;
+    // (this.socket as any).onevent = function (e: any) { onevent.call(this, e); console.log(e) }
+
     this.events = mitt()
 
     this.attachEvents()
@@ -328,7 +338,6 @@ export class Client {
 
       this.events.emit('message', message)        
     })
-
   }
 
   async login(token: string) {
