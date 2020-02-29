@@ -14,6 +14,15 @@ function info(...lines: string[]) {
   return block(lines.join('\n'))
 }
 
+function formatServer(server: Nertivia.Server) {
+  return info(
+    `${server.name} [${server.id}]`,
+    `owner: [${server.ownerID}]`,
+    `defaultChannel: ${server.defaultChannel.name} [${server.defaultChannelId}]`,
+    `icon: [${server.icon}]`,
+  )  
+}
+
 const prefix = '!'
 
 client.events.on('message', async (message: Nertivia.Message) => {
@@ -137,14 +146,22 @@ client.events.on('message', async (message: Nertivia.Message) => {
 
       const server = client.servers!.find(s => s.channels.some(c => c.id === message.channelID))!
 
-      message.reply(info(
-        `${server.name} [${server.id}]`,
-        `owner: [${server.ownerID}]`,
-        `defaultChannel: ${server.defaultChannel.name} [${server.defaultChannelId}]`,
-        `icon: [${server.icon}]`,
-      ))
+      // todo: add more info
+      message.reply(formatServer(server))
 
       break;
+    }
+
+    case "servers": {
+      await message.reply(`Server Count: ${client.servers!.length}`)
+      client.servers!.forEach(server => message.reply(formatServer(server)))
+
+      break;
+    }
+
+    case "channels": {
+      await message.reply(`Channel Count: ${client.channels.length}`)
+      client.channels.forEach(channel => message.reply(info(JSON.stringify(channel.id))))
     }
 
     default:

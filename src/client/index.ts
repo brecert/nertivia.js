@@ -346,7 +346,17 @@ export class Client {
         this.servers.push(server)
         this.events.emit('serverJoin', server)
       } else {
-        throw new Error("Recieved 'server:joined' event before client servers could be created!")
+        throw new Error("Received 'server:joined' event before client servers could be created!")
+      }
+    })
+
+    this.socket.on("server:leave", (event: NertiviaEvents.ServerLeave) => {
+      if(this.servers) {
+        const idx = this.servers.findIndex(server => server.id !== event.server_id)
+        const server = this.servers.splice(idx, 1)[0]
+        this.events.emit('serverLeft', server)
+      } else {
+        throw new Error("Received 'server:leave' before client servers could be created!")
       }
     })
   }

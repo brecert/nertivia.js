@@ -31,3 +31,7 @@ export interface DeleteMessage {
 }
 
 export type ServerJoined = NertiviaTypes.Server
+
+export interface ServerLeave {
+	server_id: string
+}
