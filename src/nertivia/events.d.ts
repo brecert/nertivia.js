@@ -35,3 +35,18 @@ export type ServerJoined = NertiviaTypes.Server
 export interface ServerLeave {
 	server_id: string
 }
+
+export interface ServerAddChannel {
+	channel: NertiviaTypes.CreatedChannel
+}
+
+export interface ServerUpdateChannel {
+	name: string
+	channelID: string
+	permissions?: NertiviaTypes.ChannelPermissions
+}
+
+export interface ServerRemoveChannel {
+	channelID: string
+	server_id: string
+}

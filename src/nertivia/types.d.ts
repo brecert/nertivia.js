@@ -1,14 +1,20 @@
 import * as NertiviaConstants from './constants'
 
-export interface Channel {
-	name: string
-	channelID: string
-	server: string
-	permissions: {
-		_id: string
-		send_message: boolean
-	}
+export interface ChannelPermissions {
+	send_message: boolean
 }
+
+export interface Channel {
+	channelID: string
+	lastMessaged: number
+	name: string
+	server_id: string
+	status: number // todo: check
+	recipients: unknown
+	permissions: ChannelPermissions
+}
+
+export type CreatedChannel = Omit<Channel, 'permissions'>
 
 export interface Server {
 	name: string

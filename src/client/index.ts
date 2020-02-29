@@ -291,8 +291,8 @@ export class Client {
     this.socket = io(Client.SOCKET_URL, { autoConnect: false });
     
     // debug, REMOVE!
-    // const onevent = (this.socket as any).onevent;
-    // (this.socket as any).onevent = function (e: any) { onevent.call(this, e); console.log(e.data[0], e.data[1]) }
+    const onevent = (this.socket as any).onevent;
+    (this.socket as any).onevent = function (e: any) { onevent.call(this, e); console.log(e.data[0], e.data[1]) }
 
     this.events = mitt()
 
