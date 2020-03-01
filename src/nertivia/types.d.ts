@@ -11,7 +11,7 @@ export interface Channel {
 	server_id: string
 	status: number // todo: check
 	recipients: unknown
-	permissions: ChannelPermissions
+	permissions?: ChannelPermissions
 }
 
 export type CreatedChannel = Omit<Channel, 'permissions'>

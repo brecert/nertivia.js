@@ -291,8 +291,8 @@ export class Client {
     this.socket = io(Client.SOCKET_URL, { autoConnect: false });
     
     // debug, REMOVE!
-    const onevent = (this.socket as any).onevent;
-    (this.socket as any).onevent = function (e: any) { onevent.call(this, e); console.log(e.data[0], e.data[1]) }
+    // const onevent = (this.socket as any).onevent;
+    // (this.socket as any).onevent = function (e: any) { onevent.call(this, e); console.log(e.data[0], e.data[1]) }
 
     this.events = mitt()
 
@@ -352,11 +352,41 @@ export class Client {
 
     this.socket.on("server:leave", (event: NertiviaEvents.ServerLeave) => {
       if(this.servers) {
-        const idx = this.servers.findIndex(server => server.id !== event.server_id)
+        const idx = this.servers.findIndex(s => s.id !== event.server_id)
         const server = this.servers.splice(idx, 1)[0]
         this.events.emit('serverLeft', server)
       } else {
         throw new Error("Received 'server:leave' before client servers could be created!")
+      }
+    })
+
+    this.socket.on("server:add_channel", (event: NertiviaEvents.ServerAddChannel) => {
+      if(this.servers) {
+        const server = this.servers.find(s => s.id === event.channel.server_id)
+        if(server) {
+          const channel = new Channel(event.channel, this)
+          server.channels.push(channel)
+          this.events.emit('channelCreate', channel)
+        } else {
+          throw new Error("Received 'server:add_channel' event on server that does not exist!")
+        }
+      } else {
+        throw new Error("Received 'server:add_channel' before client servers could be created!")
+      }
+    })
+
+    this.socket.on("server:remove_channel", (event: NertiviaEvents.ServerRemoveChannel) => {
+      if(this.servers) {
+        const server = this.servers.find(s => s.id === event.server_id)
+        if(server) {
+          const idx = server.channels.findIndex(c => c.id !== event.channelID)
+          const channel = server.channels.splice(idx, 1)[0]
+          this.events.emit('channelDelete', channel)
+        } else {
+          throw new Error("Received 'server:remove_channel' event on server that does not exist!")
+        }
+      } else {
+        throw new Error("Received 'server:remove_channel' before client servers could be created!")
       }
     })
   }

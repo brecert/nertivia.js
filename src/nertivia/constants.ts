@@ -18,12 +18,12 @@ export const EVENT_LIST = [
 	'relationshipAdd',
 	'relationshipRemove',
 
-	'server:add_channel',
+	'server:add_channel', // finished
 	'server:joined', // finished
 	'server:leave', // finished
 	'server:member_add',
 	'server:member_remove',
-	'server:remove_channel',
+	'server:remove_channel', // finished
 	'server:update_channel',
 	'server:roles',
 	'server:members',

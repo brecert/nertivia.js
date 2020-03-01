@@ -160,8 +160,7 @@ client.events.on('message', async (message: Nertivia.Message) => {
     }
 
     case "channels": {
-      await message.reply(`Channel Count: ${client.channels.length}`)
-      client.channels.forEach(channel => message.reply(info(JSON.stringify(channel.id))))
+      await message.reply(`Channel Count: ${client.channels.length}\n\n${info(client.channels.map(c => c.id).join('\n'))}`)
     }
 
     default:
