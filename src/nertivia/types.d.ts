@@ -65,7 +65,6 @@ export interface ClientUser {
 	uniqueID: string
 	tag: string
 	settings: {
-		_id: string
 		appearance: Apperance
 	}
 	survey_completed: boolean
@@ -100,11 +99,16 @@ export interface Message {
 	created: number
 }
 
-export type FriendStatus = [string?, string?]
+export type UserStatus = [string, string] | [null, null]
 
 export interface Settings {
-	_id: string,
 	apperance: Apperance,
 	GDriveLinked: boolean,
 	customEmojis: unknown[]
+}
+
+export interface ServerMember {
+	type: 'MEMBER' | 'OWNER' |  string
+	member: Member
+	server_id: string
 }

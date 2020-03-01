@@ -1,16 +1,13 @@
 import * as NertiviaTypes from './types'
+import * as NertiviaConstants from './constants'
 
 export interface Success {
 	message: string
 	user: NertiviaTypes.ClientUser
-	serverMembers: {
-		type: 'MEMBER' | 'OWNER' |  string
-		member: NertiviaTypes.Member
-		server_id: string
-	}[]
+	serverMembers: NertiviaTypes.ServerMember[]
 	dms: NertiviaTypes.DirectMessage[]
 	notifications: Notification[]
-	currentFriendStatus: NertiviaTypes.FriendStatus[]
+	currentFriendStatus: NertiviaTypes.UserStatus[]
 }
 
 export interface UpdateMessage {
@@ -49,4 +46,14 @@ export interface ServerUpdateChannel {
 export interface ServerRemoveChannel {
 	channelID: string
 	server_id: string
+}
+
+export interface ServerMembers {
+	serverMembers: NertiviaTypes.ServerMember[]
+	memberPresences: NertiviaTypes.UserStatus[]
+}
+
+export interface UserStatusChange {
+	uniqueID: string
+	status: NertiviaConstants.StatusType
 }

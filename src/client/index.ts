@@ -6,6 +6,7 @@ import * as NertiviaTypes from '../nertivia/types'
 import * as NertiviaConstants from '../nertivia/constants'
 import * as NertiviaResponses from '../nertivia/responses'
 import * as NertiviaRequests from './requests'
+import { Collection } from '../utils/collection'
   
 export class Server {
   constructor(public raw: NertiviaTypes.Server, public client: Client) {
@@ -162,6 +163,7 @@ export class Message {
   readonly initialContent = this.raw.message
   readonly type = this.raw.type
   readonly system = this.raw.type !== NertiviaConstants.MessageType.DEFAULT
+  readonly author = new User(this.raw.creator, this.client)
   
   // author
 
@@ -180,10 +182,6 @@ export class Message {
     return (this.raw.files || []).map(file => new Attachment(file, this.client))
   }
 
-  get author() {
-    return new User(this.raw.creator, this.client)
-  }
-  
   readonly channelID = this.raw.channelID
 
   get channel() {
@@ -275,6 +273,8 @@ export class Client {
   dms?: DMChannel[]
   sid?: string
 
+  users: Collection<string, User> = new Collection()
+
   // todo: reverse this process and have the servers add to the cache here
   get channels(): GenericChannel[] {
     return [...this.servers!.flatMap(server => server.channels), ...this.dms!]
@@ -289,10 +289,6 @@ export class Client {
 
   constructor() {
     this.socket = io(Client.SOCKET_URL, { autoConnect: false });
-    
-    // debug, REMOVE!
-    // const onevent = (this.socket as any).onevent;
-    // (this.socket as any).onevent = function (e: any) { onevent.call(this, e); console.log(e.data[0], e.data[1]) }
 
     this.events = mitt()
 
@@ -308,6 +304,7 @@ export class Client {
       this.user = new ClientUser(data.user, this)
       this.servers = data.user.servers.map(server => new Server(server, this))
       this.dms = data.dms.map(dm => new DMChannel(dm, this))
+      data.serverMembers.map(m => new User(m.member, this)).forEach(u => this.users.add(u))
 
       this.events.emit('ready')
     })
@@ -388,6 +385,13 @@ export class Client {
       } else {
         throw new Error("Received 'server:remove_channel' before client servers could be created!")
       }
+    })
+
+    this.socket.on("server:members", (event: NertiviaEvents.ServerMembers) => {
+      event.serverMembers.forEach(m => {
+        const user = this.users.add(new User(m.member, this))
+        // todo: add to server
+      })
     })
   }
 

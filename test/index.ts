@@ -6,6 +6,11 @@ import * as fs from 'fs'
 const client = new Nertivia.Client()
 const TOKEN = jsonfile.readFileSync('config.json').token
 
+// debug, REMOVE!
+const onevent = (client.socket as any).onevent;
+(client.socket as any).onevent = function (e: any) { onevent.call(this, e); console.log(e.data[0], e.data[1]) }
+
+
 function block(content: string) {
   return `\`\`\`\n${content}\n\`\`\``
 }
