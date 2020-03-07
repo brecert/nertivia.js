@@ -1,4 +1,6 @@
+import * as NertiviaConstants from '../nertivia/constants';
 import * as NertiviaResponses from '../nertivia/responses';
+import * as NertiviaTypes from '../nertivia/types';
 export interface ApiRequestParams {
     token?: string;
     data?: any;
@@ -49,4 +51,23 @@ export interface LeaveServerResponse {
     status: "Done!" | string;
 }
 export declare function leaveServer({ token, sid }: ITokens, serverID: string): Promise<LeaveServerResponse>;
+export interface AboutMe {
+    _id: string;
+    name?: string;
+    gender?: string;
+    age?: string;
+    continent?: string;
+    country?: string;
+    about_me?: string;
+}
+export interface UserDetails extends NertiviaTypes.Member {
+    created: number;
+    about_me?: AboutMe;
+    badges: NertiviaConstants.BadgeType[];
+}
+export interface UserDetailsResponse {
+    user: UserDetails;
+}
+export declare function userDetails({ token, sid }: ITokens, userID: string): Promise<UserDetailsResponse>;
+export declare function typingPing({ token, sid }: ITokens, channelID: string): void;
 //# sourceMappingURL=requests.d.ts.map

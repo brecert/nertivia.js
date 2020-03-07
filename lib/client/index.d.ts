@@ -3,6 +3,7 @@ import * as mitt from 'mitt';
 import * as NertiviaTypes from '../nertivia/types';
 import * as NertiviaConstants from '../nertivia/constants';
 import * as NertiviaRequests from './requests';
+import { Collection } from '../utils/collection';
 export declare class Server {
     raw: NertiviaTypes.Server;
     client: Client;
@@ -17,21 +18,24 @@ export declare class Server {
     join(): Promise<NertiviaRequests.JoinServerResponse>;
     leave(): Promise<NertiviaRequests.LeaveServerResponse>;
 }
-export declare class Channel {
+export declare class GenericChannel {
+    raw: NertiviaTypes.Channel | NertiviaTypes.DirectMessage;
+    client: Client;
+    constructor(raw: NertiviaTypes.Channel | NertiviaTypes.DirectMessage, client: Client);
+    readonly id: string;
+    send(content: string): Promise<Message>;
+    startTyping(count?: number): void;
+}
+export declare class Channel extends GenericChannel {
     raw: NertiviaTypes.Channel;
     client: Client;
     type: string;
     constructor(raw: NertiviaTypes.Channel, client: Client);
-    readonly id: string;
     readonly name: string;
-    readonly permissions: {
-        _id: string;
-        send_message: boolean;
-    };
+    readonly permissions: NertiviaTypes.ChannelPermissions | undefined;
     readonly server: Server | undefined;
-    send(content: string): Promise<Message>;
 }
-export declare class DMChannel {
+export declare class DMChannel extends GenericChannel {
     raw: NertiviaTypes.DirectMessage;
     client: Client;
     type: string;
@@ -40,9 +44,7 @@ export declare class DMChannel {
     readonly lastMessagedTimestamp: number;
     readonly lastMessaged: Date;
     readonly users: User[];
-    send(content: string): Promise<Message>;
 }
-export declare type GenericChannel = Channel | DMChannel;
 export declare class User {
     raw: NertiviaTypes.Member;
     client: Client;
@@ -55,6 +57,22 @@ export declare class User {
     readonly tag: string;
     readonly dmChannel: DMChannel | undefined;
     openDM(): Promise<DMChannel>;
+    fetchProfile(): Promise<UserProfile>;
+}
+export declare class UserProfile extends User {
+    raw: NertiviaRequests.UserDetails;
+    client: Client;
+    constructor(raw: NertiviaRequests.UserDetails, client: Client);
+    private readonly aboutUser;
+    readonly createdTimestamp: number;
+    readonly createdAt: Date;
+    readonly name: string | undefined;
+    readonly age: string | undefined;
+    readonly continent: string | undefined;
+    readonly country: string | undefined;
+    readonly gender: string | undefined;
+    readonly about: string | undefined;
+    readonly badges: NertiviaConstants.BadgeType[];
 }
 export declare class Attachment {
     raw: NertiviaTypes.File;
@@ -77,14 +95,14 @@ export declare class Message {
     readonly initialContent: string | undefined;
     readonly type: NertiviaConstants.MessageType | undefined;
     readonly system: boolean;
+    readonly author: User;
     deleted: boolean;
     editedTimestamp: number;
     readonly editedAt: Date;
     readonly content: string;
     readonly attachments: Attachment[];
-    readonly author: User;
     readonly channelID: string;
-    readonly channel: Channel | DMChannel | undefined;
+    readonly channel: GenericChannel | undefined;
     reply(content: string): Promise<Message>;
     delete(): Promise<this>;
     edit(content: string): Promise<this>;
@@ -109,6 +127,7 @@ export declare class Client {
     servers?: Server[];
     dms?: DMChannel[];
     sid?: string;
+    users: Collection<string, User>;
     readonly channels: GenericChannel[];
     readonly tokens: NertiviaRequests.ITokens;
     constructor();

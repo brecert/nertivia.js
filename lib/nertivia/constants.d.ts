@@ -17,4 +17,8 @@ export declare enum StatusType {
     BUSY = 3,
     LOOKING_TO_PLAY = 4
 }
+export declare enum BadgeType {
+    BUG_CATCHER = 3,
+    SUPPORTER = 5
+}
 //# sourceMappingURL=constants.d.ts.map
